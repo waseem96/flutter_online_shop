@@ -45,7 +45,7 @@ List<Product> demoProducts = [
   Product(
     id: 2,
     images: [
-      "assets/images/iphone_x.png",
+      "assets/images/iPhone Batteries/iphone-5c-batteri-oem-original-kapacitet-b70.jpg",
     ],
     colors: [
       Color(0xFFF6625E),
@@ -53,7 +53,7 @@ List<Product> demoProducts = [
       Color(0xFFDECB9C),
       Colors.white,
     ],
-    title: "iPhone Chargers",
+    title: "iPhone Battery",
     price: 50.5,
     description: description,
     rating: 4.1,
@@ -62,7 +62,7 @@ List<Product> demoProducts = [
   Product(
     id: 3,
     images: [
-      "assets/images/iphone_11.png",
+      "assets/images/iPhone Covers/iphone-11-cover-anti-shock-5ab.jpg",
     ],
     colors: [
       Color(0xFFF6625E),
@@ -70,7 +70,7 @@ List<Product> demoProducts = [
       Color(0xFFDECB9C),
       Colors.white,
     ],
-    title: "iPhone Accessories",
+    title: "iPhone Cover",
     price: 36.55,
     description: description,
     rating: 4.1,

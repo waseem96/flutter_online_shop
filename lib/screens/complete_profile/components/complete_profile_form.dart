@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_online_shop/backend/api_service.dart';
 import 'package:flutter_online_shop/components/custom_surfix_icon.dart';
 import 'package:flutter_online_shop/components/default_button.dart';
 import 'package:flutter_online_shop/components/form_error.dart';
+import 'package:flutter_online_shop/models/customerModel.dart';
 import 'package:flutter_online_shop/screens/otp/otp_screen.dart';
 
 import '../../../constants.dart';
@@ -13,6 +15,11 @@ class CompleteProfileForm extends StatefulWidget {
 }
 
 class _CompleteProfileFormState extends State<CompleteProfileForm> {
+  //https://www.youtube.com/watch?v=HN5ANMGAYo8&t=148s
+  APIService apiService;
+  CustomerModel customerModel;
+  bool isApiCallProcess = false;
+
   final _formKey = GlobalKey<FormState>();
   final List<String> errors = [];
   String firstName;
@@ -35,6 +42,14 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
   }
 
   @override
+  void initState() {
+    apiService = new APIService();
+    customerModel = new CustomerModel();
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -53,6 +68,27 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             text: "continue",
             press: () {
               if (_formKey.currentState.validate()) {
+                //added this
+                _formKey.currentState.save();
+                print(customerModel.toJson());
+                setState(() {
+                  isApiCallProcess = true;
+                });
+                apiService.creatCustomer(customerModel).then((ret) {
+                  setState(() {
+                    isApiCallProcess = false;
+                  });
+                  if (ret) {
+                    SnackBar(
+                      content: Text('Registration complete!'),
+                    );
+                  } else {
+                    SnackBar(
+                      content: Text('Registration failed!'),
+                    );
+                  }
+                });
+                //to here
                 Navigator.push(
                     context, MaterialPageRoute(builder: (_) => OtpScreen()));
               }
@@ -82,11 +118,9 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       decoration: InputDecoration(
         labelText: "Address",
         hintText: "Enter your phone address",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon:
-            CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
+        CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
       ),
     );
   }
@@ -111,8 +145,6 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       decoration: InputDecoration(
         labelText: "Phone Number",
         hintText: "Enter your phone number",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Phone.svg"),
       ),
@@ -121,12 +153,10 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
   TextFormField buildLastNameFormField() {
     return TextFormField(
-      onSaved: (newValue) => lastName = newValue,
+      onSaved: (newValue) => this.customerModel.lastName = newValue,
       decoration: InputDecoration(
         labelText: "Last Name",
         hintText: "Enter your last name",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
       ),
@@ -135,7 +165,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
   TextFormField buildFirstNameFormField() {
     return TextFormField(
-      onSaved: (newValue) => firstName = newValue,
+      onSaved: (newValue) => this.customerModel.firstName = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kNameNullError);
@@ -152,8 +182,6 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       decoration: InputDecoration(
         labelText: "First Name",
         hintText: "Enter your first name",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
       ),

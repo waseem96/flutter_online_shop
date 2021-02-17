@@ -6,7 +6,7 @@ const kTextLightColor = Color(0xFFACACAC);
 
 const kDefaultPadding = 20.0;
 
-const kPrimaryColor = Color(0xFFFF7643);
+const kPrimaryColor = Color(0xFF3B54A4);
 const kPrimaryLightColor = Color(0xFFFFECDF);
 const kPrimaryGradientColor = LinearGradient(
   begin: Alignment.topLeft,

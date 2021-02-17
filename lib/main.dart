@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_online_shop/routes.dart';
 import 'package:flutter_online_shop/screens/home1/home_screen.dart';
+import 'package:flutter_online_shop/screens/sign_in/sign_in_screen.dart';
 import 'package:flutter_online_shop/theme.dart';
 import 'package:flutter_online_shop/screens/splash_screen/splash_screen.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: theme(),
       // home: SplashScreen(),
-      initialRoute: SplashScreen.routeName,
+      initialRoute: SignInScreen.routeName,
       routes: routes,
     );
   }

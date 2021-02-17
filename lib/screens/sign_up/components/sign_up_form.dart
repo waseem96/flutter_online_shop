@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_online_shop/backend/api_service.dart';
 import 'package:flutter_online_shop/components/custom_surfix_icon.dart';
 import 'package:flutter_online_shop/components/default_button.dart';
 import 'package:flutter_online_shop/components/form_error.dart';
+import 'package:flutter_online_shop/models/customerModel.dart';
 import 'package:flutter_online_shop/screens/complete_profile/complete_profile_screen.dart';
 
 import '../../../constants.dart';
@@ -13,6 +15,11 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  //https://www.youtube.com/watch?v=HN5ANMGAYo8&t=148s
+  APIService apiService;
+  CustomerModel customerModel;
+  bool isApiCallProcess = false;
+
   final _formKey = GlobalKey<FormState>();
   String email;
   String password;
@@ -35,6 +42,14 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   @override
+  void initState() {
+    apiService = new APIService();
+    customerModel = new CustomerModel();
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -52,6 +67,24 @@ class _SignUpFormState extends State<SignUpForm> {
             press: () {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
+                print(customerModel.toJson());
+                setState(() {
+                  isApiCallProcess = true;
+                });
+                apiService.creatCustomer(customerModel).then((ret) {
+                  setState(() {
+                    isApiCallProcess = false;
+                  });
+                  if (ret) {
+                    SnackBar(
+                      content: Text('Registration almost complete!'),
+                    );
+                  } else {
+                    SnackBar(
+                      content: Text('Registration failed!'),
+                    );
+                  }
+                });
                 // if all are valid then go to success screen
                 Navigator.push(context,
                     MaterialPageRoute(builder: (_) => CompleteProfileScreen()));
@@ -70,7 +103,8 @@ class _SignUpFormState extends State<SignUpForm> {
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
-        } else if (value.isNotEmpty && password == confirmPassword) {
+        } else if (value.isNotEmpty &&
+            this.customerModel.password == confirmPassword) {
           removeError(error: kMatchPassError);
         }
         confirmPassword = value;
@@ -79,7 +113,7 @@ class _SignUpFormState extends State<SignUpForm> {
         if (value.isEmpty) {
           addError(error: kPassNullError);
           return "";
-        } else if ((password != value)) {
+        } else if ((this.customerModel.password != value)) {
           addError(error: kMatchPassError);
           return "";
         }
@@ -88,8 +122,6 @@ class _SignUpFormState extends State<SignUpForm> {
       decoration: InputDecoration(
         labelText: "Confirm Password",
         hintText: "Re-enter your password",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
@@ -99,14 +131,15 @@ class _SignUpFormState extends State<SignUpForm> {
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
-      onSaved: (newValue) => password = newValue,
+      onSaved: (newValue) => this.customerModel.password = newValue,
+      //Changed from password
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
         } else if (value.length >= 8) {
           removeError(error: kShortPassError);
         }
-        password = value;
+        this.customerModel.password = value; //Changed from password
       },
       validator: (value) {
         if (value.isEmpty) {
@@ -121,8 +154,6 @@ class _SignUpFormState extends State<SignUpForm> {
       decoration: InputDecoration(
         labelText: "Password",
         hintText: "Enter your password",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
@@ -132,7 +163,8 @@ class _SignUpFormState extends State<SignUpForm> {
   TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => email = newValue,
+      onSaved: (newValue) => this.customerModel.email = newValue,
+      //Changed email here
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);
@@ -154,8 +186,6 @@ class _SignUpFormState extends State<SignUpForm> {
       decoration: InputDecoration(
         labelText: "Email",
         hintText: "Enter your email",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),

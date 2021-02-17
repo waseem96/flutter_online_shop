@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_online_shop/backend/api_service.dart';
 import 'package:flutter_online_shop/components/custom_surfix_icon.dart';
 import 'package:flutter_online_shop/components/form_error.dart';
 import 'package:flutter_online_shop/helper/keyboard.dart';
@@ -15,6 +16,8 @@ class SignForm extends StatefulWidget {
 }
 
 class _SignFormState extends State<SignForm> {
+  bool isApiCallProcess = false;
+  APIService apiService;
   final _formKey = GlobalKey<FormState>();
   String email;
   String password;
@@ -33,6 +36,12 @@ class _SignFormState extends State<SignForm> {
       setState(() {
         errors.remove(error);
       });
+  }
+
+  @override
+  void initState() {
+    apiService = new APIService();
+    super.initState();
   }
 
   @override
@@ -75,10 +84,18 @@ class _SignFormState extends State<SignForm> {
             press: () {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
+                setState(() {
+                  isApiCallProcess = true;
+                });
+                apiService.loginCustomer(email, password).then((ret) => {
+                      if (ret != null)
+                        {
+                          Navigator.pushReplacementNamed(
+                              context, LoginSuccessScreen.routeName),
+                        }
+                    });
                 // if all are valid then go to success screen
                 KeyboardUtil.hideKeyboard(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => LoginSuccessScreen()));
               }
             },
           ),
@@ -112,8 +129,6 @@ class _SignFormState extends State<SignForm> {
       decoration: InputDecoration(
         labelText: "Password",
         hintText: "Enter your password",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
@@ -145,8 +160,6 @@ class _SignFormState extends State<SignForm> {
       decoration: InputDecoration(
         labelText: "Email",
         hintText: "Enter your email",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),
