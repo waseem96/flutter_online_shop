@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_online_shop/backend/config.dart';
 import 'package:flutter_online_shop/models/customerModel.dart';
 import 'package:flutter_online_shop/models/login_model.dart';
+import 'package:flutter_online_shop/models/category_model.dart';
 
 class APIService {
   Future<bool> creatCustomer(CustomerModel customerModel) async {
@@ -52,5 +53,30 @@ class APIService {
       print(e.message);
     }
     return model;
+  }
+
+  Future<List<Category>> getCategories() async {
+    List<Category> data = new List<Category>();
+    try {
+      String url = Config.url +
+          Config.categoriesURL +
+          "?consumer_key=${Config.key}&consumer_secret=${Config.secretKey}";
+      var response = await Dio().get(url,
+          options: new Options(
+            headers: {
+              HttpHeaders.contentTypeHeader: "application/json",
+            },
+          ));
+      if (response.statusCode == 200) {
+        data = (response.data as List)
+            .map(
+              (i) => Category.fromJson(i),
+            )
+            .toList();
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+    return data;
   }
 }

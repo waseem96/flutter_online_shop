@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: theme(),
       // home: SplashScreen(),
-      initialRoute: SignInScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       routes: routes,
     );
   }

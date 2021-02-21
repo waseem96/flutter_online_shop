@@ -3,6 +3,7 @@ import 'package:flutter_online_shop/components/social_card.dart';
 
 import '../../../size_config.dart';
 import 'sign_up_form.dart';
+import 'sign_up_form_modified.dart';
 import 'package:flutter_online_shop/constants.dart';
 
 class Body extends StatelessWidget {
@@ -24,7 +25,8 @@ class Body extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
-                SignUpForm(),
+                //SignUpForm(),
+                SignUpFormModified(),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

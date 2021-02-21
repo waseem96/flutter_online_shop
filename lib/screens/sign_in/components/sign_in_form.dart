@@ -5,7 +5,8 @@ import 'package:flutter_online_shop/components/form_error.dart';
 import 'package:flutter_online_shop/helper/keyboard.dart';
 import 'package:flutter_online_shop/screens/forgot_password/forgot_passwrod_screen.dart';
 import 'package:flutter_online_shop/screens/log_in_success/log_in_sucess_screen.dart';
-
+import 'package:flutter_online_shop/components/progress_hud.dart';
+import 'package:flutter_online_shop/components/form_helper.dart';
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -46,61 +47,76 @@ class _SignFormState extends State<SignForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          buildEmailFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildPasswordFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: kPrimaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value;
-                  });
-                },
-              ),
-              Text("Remember me"),
-              Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => ForgotPasswordScreen())),
-                child: Text(
-                  "Forgot Password",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              )
-            ],
-          ),
-          FormError(errors: errors),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          DefaultButton(
-            text: "Continue",
-            press: () {
-              if (_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                setState(() {
-                  isApiCallProcess = true;
-                });
-                apiService.loginCustomer(email, password).then((ret) => {
-                      if (ret != null)
-                        {
-                          Navigator.pushReplacementNamed(
-                              context, LoginSuccessScreen.routeName),
-                        }
+    return ProgressHUD(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            buildEmailFormField(),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            buildPasswordFormField(),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            Row(
+              children: [
+                Checkbox(
+                  value: remember,
+                  activeColor: kPrimaryColor,
+                  onChanged: (value) {
+                    setState(() {
+                      remember = value;
                     });
-                // if all are valid then go to success screen
-                KeyboardUtil.hideKeyboard(context);
-              }
-            },
-          ),
-        ],
+                  },
+                ),
+                Text("Remember me"),
+                Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => ForgotPasswordScreen())),
+                  child: Text(
+                    "Forgot Password",
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                )
+              ],
+            ),
+            FormError(errors: errors),
+            SizedBox(height: getProportionateScreenHeight(20)),
+            DefaultButton(
+              text: "Continue",
+              press: () {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                  setState(() {
+                    isApiCallProcess = true;
+                  });
+                  apiService.loginCustomer(email, password).then((ret) => {
+                        if (ret != null)
+                          {
+                            print(ret.data.token),
+                            print(ret.data.toJson()),
+                            FormHelper.showMessage(context, "Ubreak WeFix",
+                                "Success!", "ok", () {})
+                          }
+                        else
+                          {
+                            FormHelper.showMessage(context, "Ubreak WeFix",
+                                "Login Failed!", "ok", () {})
+                          }
+                      });
+                  // if all are valid then go to success screen
+                  Navigator.pushReplacementNamed(
+                      context, LoginSuccessScreen.routeName);
+                  KeyboardUtil.hideKeyboard(context);
+                }
+              },
+            ),
+          ],
+        ),
       ),
+      inAsyncCall: isApiCallProcess,
+      opacity: 0.3,
     );
   }
 
